@@ -1,38 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // import { useState } from "react";
 // import RouteMap from "../Components/RouteMap";
 
@@ -175,68 +140,6 @@
 //   );
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import { useState } from "react";
 import RouteMap from "../Components/RouteMap";
 
@@ -264,10 +167,18 @@ export default function TrackingDashboard() {
         return;
       }
 
+      const BASE_URL = process.env.REACT_APP_API_BASE;
+
+      if (!BASE_URL) {
+        throw new Error("REACT_APP_API_BASE is missing in .env");
+      }
+
       const res = await fetch(
-        `http://122.169.40.118:8002/api/tracking/route-wise?SalesRouteCode=${routeCode}&TripDate=${date}`,
+        `${BASE_URL}/api/tracking/route-wise?SalesRouteCode=${routeCode}&TripDate=${date}`,
         {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
@@ -281,7 +192,7 @@ export default function TrackingDashboard() {
       }
 
       const validTrips = json.data.filter(
-        t => Array.isArray(t.Path) && t.Path.length >= 2
+        (t) => Array.isArray(t.Path) && t.Path.length >= 2
       );
 
       if (!validTrips.length) {
@@ -336,7 +247,7 @@ export default function TrackingDashboard() {
             disabled={loading}
             style={{
               ...styles.button,
-              opacity: loading ? 0.7 : 1
+              opacity: loading ? 0.7 : 1,
             }}
           >
             {loading ? "Loading Route..." : "View Route"}
@@ -397,37 +308,37 @@ const styles = {
   container: {
     display: "flex",
     height: "100vh",
-    background: "#f4f6f8"
+    background: "#f4f6f8",
   },
   sidebar: {
     width: 340,
     padding: 20,
     background: "#ffffff",
     borderRight: "1px solid #ddd",
-    boxSizing: "border-box"
+    boxSizing: "border-box",
   },
   title: {
     marginBottom: 20,
-    color: "#1a73e8"
+    color: "#1a73e8",
   },
   card: {
     background: "#fafafa",
     padding: 16,
     borderRadius: 8,
-    boxShadow: "0 2px 6px rgba(0,0,0,0.08)"
+    boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
   },
   label: {
     fontSize: 13,
     fontWeight: 600,
     marginBottom: 4,
-    display: "block"
+    display: "block",
   },
   input: {
     width: "100%",
     padding: 8,
     marginBottom: 12,
     borderRadius: 6,
-    border: "1px solid #ccc"
+    border: "1px solid #ccc",
   },
   button: {
     width: "100%",
@@ -437,28 +348,28 @@ const styles = {
     border: "none",
     borderRadius: 6,
     fontWeight: 600,
-    cursor: "pointer"
+    cursor: "pointer",
   },
   error: {
     marginTop: 10,
     color: "red",
-    fontSize: 13
+    fontSize: 13,
   },
   infoCard: {
     marginTop: 20,
     padding: 16,
     borderRadius: 8,
     background: "#f0f7ff",
-    boxShadow: "0 2px 6px rgba(0,0,0,0.08)"
+    boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
   },
   infoRow: {
     display: "flex",
     justifyContent: "space-between",
-    marginBottom: 6
+    marginBottom: 6,
   },
   mapPanel: {
     flex: 1,
-    position: "relative"
+    position: "relative",
   },
   mapPlaceholder: {
     height: "100%",
@@ -466,52 +377,6 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     color: "#888",
-    fontSize: 18
-  }
+    fontSize: 18,
+  },
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

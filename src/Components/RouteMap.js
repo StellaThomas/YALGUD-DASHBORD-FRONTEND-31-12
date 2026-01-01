@@ -574,9 +574,16 @@ import maplibregl from "maplibre-gl";
 import { io } from "socket.io-client";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-const socket = io("http://122.169.40.118:8002", {
+const BASE_URL = process.env.REACT_APP_API_BASE;
+
+if (!BASE_URL) {
+  throw new Error("REACT_APP_API_BASE is missing in .env");
+}
+
+const socket = io(BASE_URL, {
   transports: ["websocket"]
 });
+
 
 /* UTIL */
 const smoothCoords = (coords, step = 2) =>

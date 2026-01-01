@@ -414,20 +414,20 @@ export default function OrdersPage() {
                       <Typography sx={{ fontSize: "0.95rem" }}>
                         {orderMeta?.agentDetails?.Mobile || "N/A"}
                       </Typography>
-
+{/* 
                       <Typography
                         sx={{ fontWeight: 600, mt: 1, fontSize: "0.85rem" }}
                       >
                         Address
-                      </Typography>
+                      </Typography> */}
                       {/* <Typography sx={{ fontSize: "0.95rem" }}>{orderMeta?.agentDetails?.Address || "N/A"}</Typography> */}
-                      <Typography>
+                      {/* <Typography>
                         Address:{" "}
                         {orderMeta?.agentDetails?.Address ||
                           orderMeta?.Address ||
                           orderMeta?.address ||
                           "N/A"}
-                      </Typography>
+                      </Typography> */}
                     </Box>
                   </Grid>
 
@@ -467,22 +467,22 @@ export default function OrdersPage() {
                       <Typography sx={{ fontSize: "0.95rem" }}>
                         {orderMeta?.routeDetails?.RouteName || "N/A"}
                       </Typography>
-
+{/* 
                       <Typography
                         sx={{ fontWeight: 600, mt: 1, fontSize: "0.85rem" }}
                       >
                         Vehicle No
-                      </Typography>
+                      </Typography> */}
                       {/* <Typography sx={{ fontSize: "0.95rem" }}>
                         {orderMeta?.routeDetails?.VehicleNo || "N/A"}
                       </Typography> */}
-                      <Typography>
+                      {/* <Typography>
                         Vehicle No:{" "}
                         {orderMeta?.routeDetails?.VehicleNo ||
                           orderMeta?.VehicleNo ||
                           orderMeta?.vehicleNo ||
                           "N/A"}
-                      </Typography>
+                      </Typography> */}
 
                       <Typography
                         sx={{ fontWeight: 600, mt: 1, fontSize: "0.85rem" }}

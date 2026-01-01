@@ -1,4 +1,3 @@
-
 // import React, { useState } from "react";
 // import {
 //   Box,
@@ -368,50 +367,6 @@
 //   );
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // src/pages/UploadInvoicePage.jsx
 import React, { useState } from "react";
 import {
@@ -444,9 +399,14 @@ import Papa from "papaparse";
 const envBase = process.env.REACT_APP_API_BASE;
 const host = window?.location?.hostname || "localhost";
 const isLocal = host === "localhost" || host === "127.0.0.1";
-const DEFAULT_EXTERNAL = "http://122.169.40.118:8002";
+// const DEFAULT_EXTERNAL = "http://193.203.161.210:8002";
 
-export const BASE_URL = envBase || (isLocal ? "http://localhost:8002" : DEFAULT_EXTERNAL);
+export const BASE_URL = process.env.REACT_APP_API_BASE;
+
+if (!BASE_URL) {
+  throw new Error("REACT_APP_API_BASE is missing in .env file");
+}
+
 
 export default function UploadInvoicePage() {
   const [file, setFile] = useState(null);
@@ -480,7 +440,11 @@ export default function UploadInvoicePage() {
       },
       error(err) {
         console.error("Parse error", err);
-        setSnack({ open: true, severity: "error", message: "Failed to parse CSV" });
+        setSnack({
+          open: true,
+          severity: "error",
+          message: "Failed to parse CSV",
+        });
         setParsing(false);
       },
     });
@@ -488,7 +452,11 @@ export default function UploadInvoicePage() {
 
   const onUpload = async () => {
     if (!file) {
-      setSnack({ open: true, severity: "warning", message: "Please choose a CSV file first" });
+      setSnack({
+        open: true,
+        severity: "warning",
+        message: "Please choose a CSV file first",
+      });
       return;
     }
 
@@ -500,24 +468,33 @@ export default function UploadInvoicePage() {
       form.append("billsCsv", file); // must match backend upload.single('billsCsv')
 
       const url = `${BASE_URL}/api/erp/upload-bills`;
+
       const res = await axios.post(url, form, {
         headers: { "Content-Type": "multipart/form-data" },
         timeout: 120000,
       });
 
       if (res.data && res.data.ok) {
-        setSnack({ open: true, severity: "success", message: "Uploaded and processed by server" });
+        setSnack({
+          open: true,
+          severity: "success",
+          message: "Uploaded and processed by server",
+        });
 
         const updated = res.data.updated || [];
         if (updated.length) {
           const csvHeader = "Invoice number,Status\n";
-          const csvBody = updated.map((u) => `${u.invoice},${u.status}`).join("\n");
+          const csvBody = updated
+            .map((u) => `${u.invoice},${u.status}`)
+            .join("\n");
           const blob = new Blob([csvHeader + csvBody], { type: "text/csv" });
           const urlBlob = URL.createObjectURL(blob);
           setReportBlobUrl(urlBlob);
         }
       } else {
-        const msg = (res.data && (res.data.error || res.data.message)) || "Server returned unexpected response";
+        const msg =
+          (res.data && (res.data.error || res.data.message)) ||
+          "Server returned unexpected response";
         setSnack({ open: true, severity: "error", message: msg });
       }
     } catch (err) {
@@ -543,7 +520,9 @@ export default function UploadInvoicePage() {
       setSnack({
         open: true,
         severity: "error",
-        message: `Upload failed: ${serverMsg}${status ? ` (status ${status})` : ""}`,
+        message: `Upload failed: ${serverMsg}${
+          status ? ` (status ${status})` : ""
+        }`,
       });
     } finally {
       setUploading(false);
@@ -551,7 +530,8 @@ export default function UploadInvoicePage() {
   };
 
   const downloadSample = () => {
-    const sample = "Invoice number,Invoice total amount,Agent Code,ERPInvoiceNumber,Status\nINV-123,1000,AG001,ERP-9876,Billed\n";
+    const sample =
+      "Invoice number,Invoice total amount,Agent Code,ERPInvoiceNumber,Status\nINV-123,1000,AG001,ERP-9876,Billed\n";
     const blob = new Blob([sample], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -564,32 +544,63 @@ export default function UploadInvoicePage() {
   };
 
   const handleToggleRow = (idx) => {
-    setSelected((prev) => (prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]));
+    setSelected((prev) =>
+      prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]
+    );
   };
 
   const handleSendMessage = () => {
     if (selected.length === 0) {
-      setSnack({ open: true, severity: "warning", message: "No rows selected" });
+      setSnack({
+        open: true,
+        severity: "warning",
+        message: "No rows selected",
+      });
       return;
     }
     const selectedRows = selected.map((i) => previewRows[i]);
     console.log("Selected rows payload:", selectedRows);
-    setSnack({ open: true, severity: "success", message: `Message sent for ${selected.length} row(s)` });
+    setSnack({
+      open: true,
+      severity: "success",
+      message: `Message sent for ${selected.length} row(s)`,
+    });
   };
 
   return (
     <Box sx={{ p: 3 }}>
       <Paper sx={{ p: 3 }} elevation={4}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
           <Typography variant="h6">Upload ERP Billed CSV</Typography>
           <Box>
-            <Button startIcon={<GetAppIcon />} onClick={downloadSample} sx={{ mr: 1 }}>
+            <Button
+              startIcon={<GetAppIcon />}
+              onClick={downloadSample}
+              sx={{ mr: 1 }}
+            >
               Download Sample
             </Button>
-            <Button variant="contained" startIcon={<CloudUploadIcon />} onClick={() => document.getElementById("billsFileInput").click()}>
+            <Button
+              variant="contained"
+              startIcon={<CloudUploadIcon />}
+              onClick={() => document.getElementById("billsFileInput").click()}
+            >
               Choose File
             </Button>
-            <input id="billsFileInput" type="file" accept=".csv,text/csv" style={{ display: "none" }} onChange={onFileChange} />
+            <input
+              id="billsFileInput"
+              type="file"
+              accept=".csv,text/csv"
+              style={{ display: "none" }}
+              onChange={onFileChange}
+            />
           </Box>
         </Box>
 
@@ -602,8 +613,12 @@ export default function UploadInvoicePage() {
         )}
 
         <Box sx={{ mb: 2 }}>
-          <Typography variant="body2">Selected file: {file ? file.name : "None"}</Typography>
-          <Typography variant="body2" color="text.secondary">Preview (first 50 rows):</Typography>
+          <Typography variant="body2">
+            Selected file: {file ? file.name : "None"}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Preview (first 50 rows):
+          </Typography>
         </Box>
 
         <Paper variant="outlined" sx={{ mb: 2 }}>
@@ -612,11 +627,17 @@ export default function UploadInvoicePage() {
               <TableHead>
                 <TableRow>
                   {previewRows.length > 0 ? (
-                    Object.keys(previewRows[0]).slice(0, 6).map((h) => (
-                      <TableCell key={h} sx={{ fontWeight: "bold" }}>{h}</TableCell>
-                    ))
+                    Object.keys(previewRows[0])
+                      .slice(0, 6)
+                      .map((h) => (
+                        <TableCell key={h} sx={{ fontWeight: "bold" }}>
+                          {h}
+                        </TableCell>
+                      ))
                   ) : (
-                    <TableCell sx={{ fontStyle: "italic" }}>No preview available</TableCell>
+                    <TableCell sx={{ fontStyle: "italic" }}>
+                      No preview available
+                    </TableCell>
                   )}
                 </TableRow>
               </TableHead>
@@ -624,12 +645,28 @@ export default function UploadInvoicePage() {
                 {previewRows.map((r, idx) => {
                   const isSelected = selected.includes(idx);
                   return (
-                    <TableRow key={idx} hover selected={isSelected} onClick={() => handleToggleRow(idx)} sx={{ cursor: "pointer", userSelect: "none" }}>
-                      {Object.values(r).slice(0, 6).map((v, cidx) => (
-                        <TableCell key={cidx} sx={{ maxWidth: 220, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                          {String(v)}
-                        </TableCell>
-                      ))}
+                    <TableRow
+                      key={idx}
+                      hover
+                      selected={isSelected}
+                      onClick={() => handleToggleRow(idx)}
+                      sx={{ cursor: "pointer", userSelect: "none" }}
+                    >
+                      {Object.values(r)
+                        .slice(0, 6)
+                        .map((v, cidx) => (
+                          <TableCell
+                            key={cidx}
+                            sx={{
+                              maxWidth: 220,
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            {String(v)}
+                          </TableCell>
+                        ))}
                     </TableRow>
                   );
                 })}
@@ -638,63 +675,72 @@ export default function UploadInvoicePage() {
           </TableContainer>
         </Paper>
 
-        <Box sx={{ display: "flex", gap: 2, alignItems: "center", flexWrap: "wrap" }}>
-          <Button variant="contained" disabled={uploading} onClick={onUpload} startIcon={<CloudUploadIcon />}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+            alignItems: "center",
+            flexWrap: "wrap",
+          }}
+        >
+          <Button
+            variant="contained"
+            disabled={uploading}
+            onClick={onUpload}
+            startIcon={<CloudUploadIcon />}
+          >
             {uploading ? "Uploading..." : "Upload to Server"}
           </Button>
 
           {reportBlobUrl && (
-            <Button startIcon={<GetAppIcon />} onClick={() => window.open(reportBlobUrl, "_blank")}>
+            <Button
+              startIcon={<GetAppIcon />}
+              onClick={() => window.open(reportBlobUrl, "_blank")}
+            >
               Download Report
             </Button>
           )}
 
-          <Button variant="contained" onClick={handleSendMessage} disabled={selected.length === 0} sx={{
-            ml: 2, width: 200, backgroundColor: selected.length === 0 ? "#b8f5b8" : "#32CD32", color: "#fff",
-            fontWeight: "bold", textTransform: "none", boxShadow: "0px 3px 6px rgba(0,0,0,0.2)",
-            "&:hover": { backgroundColor: selected.length === 0 ? "#b8f5b8" : "#2ebe2e" },
-            "&.Mui-disabled": { backgroundColor: "#5bd85bff", color: "#ffffff", opacity: 1 }
-          }}>
+          <Button
+            variant="contained"
+            onClick={handleSendMessage}
+            disabled={selected.length === 0}
+            sx={{
+              ml: 2,
+              width: 200,
+              backgroundColor: selected.length === 0 ? "#b8f5b8" : "#32CD32",
+              color: "#fff",
+              fontWeight: "bold",
+              textTransform: "none",
+              boxShadow: "0px 3px 6px rgba(0,0,0,0.2)",
+              "&:hover": {
+                backgroundColor: selected.length === 0 ? "#b8f5b8" : "#2ebe2e",
+              },
+              "&.Mui-disabled": {
+                backgroundColor: "#5bd85bff",
+                color: "#ffffff",
+                opacity: 1,
+              },
+            }}
+          >
             Send WhatsApp
           </Button>
 
-          {uploading && <Typography variant="body2">Please wait, processing on server...</Typography>}
+          {uploading && (
+            <Typography variant="body2">
+              Please wait, processing on server...
+            </Typography>
+          )}
         </Box>
       </Paper>
 
-      <Snackbar open={snack.open} autoHideDuration={6000} onClose={() => setSnack({ ...snack, open: false })}>
+      <Snackbar
+        open={snack.open}
+        autoHideDuration={6000}
+        onClose={() => setSnack({ ...snack, open: false })}
+      >
         <Alert severity={snack.severity}>{snack.message}</Alert>
       </Snackbar>
     </Box>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

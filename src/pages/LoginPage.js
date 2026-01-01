@@ -474,6 +474,543 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// // src/pages/LoginPage.js
+// import React, { useState } from "react";
+// import {
+//   Box,
+//   Card,
+//   CardContent,
+//   TextField,
+//   Button,
+//   Typography,
+//   Container,
+//   InputAdornment,
+//   CircularProgress,
+//   Snackbar,
+//   Alert,
+// } from "@mui/material";
+// import LockIcon from "@mui/icons-material/Lock";
+// import PersonIcon from "@mui/icons-material/Person";
+// import { useNavigate } from "react-router-dom";
+// import logo from "../assets/logo.png";
+// import axios from "axios";
+
+// export default function LoginPage() {
+//   const navigate = useNavigate();
+
+//   const [creds, setCreds] = useState({
+//     username: "",
+//     password: "",
+//   });
+
+//   const [loading, setLoading] = useState(false);
+//   const [snack, setSnack] = useState({
+//     open: false,
+//     message: "",
+//     severity: "error",
+//   });
+
+//   const handleLogin = async () => {
+//     if (!creds.username || !creds.password) {
+//       setSnack({
+//         open: true,
+//         message: "Username and password are required",
+//         severity: "error",
+//       });
+//       return;
+//     }
+
+//     setLoading(true);
+// try {
+//   const res = await axios.post(
+//     "http://193.203.161.210:8002/api/agent/admin/login",
+//     creds,
+//     { headers: { "Content-Type": "application/json" } }
+//   );
+
+//   console.log("LOGIN RESPONSE FULL =", res.data);
+
+//   const token =
+//     res.data?.token ||
+//     res.data?.accessToken ||
+//     res.data?.data?.token;
+
+//   if (!token) {
+//     throw new Error("JWT token not received from server");
+//   }
+
+//   localStorage.setItem("authToken", token);
+//   localStorage.setItem("userRole", "admin");
+
+//   navigate("/dashboard");
+// } catch (err) {
+//   setSnack({
+//     open: true,
+//     message:
+//       err.response?.data?.message ||
+//       err.message ||
+//       "Login failed",
+//     severity: "error",
+//   });
+// } finally {
+//   setLoading(false);
+// }
+//   };
+//   return (
+//     <Box
+//       sx={{
+//         minHeight: "100vh",
+//         display: "flex",
+//         alignItems: "center",
+//         justifyContent: "center",
+//         backgroundImage: "url('/bg.jpg')",
+//         backgroundSize: "cover",
+//         backgroundPosition: "center",
+//         p: 2,
+//       }}
+//     >
+//       <Container maxWidth="xs">
+//         <Card elevation={16} sx={{ borderRadius: 4 }}>
+//           <CardContent sx={{ p: 4 }}>
+//             {/* LOGO + TITLE */}
+//             <Box
+//               sx={{
+//                 display: "flex",
+//                 alignItems: "center",
+//                 gap: 2,
+//                 mb: 3,
+//               }}
+//             >
+//               <Box
+//                 component="img"
+//                 src={logo}
+//                 alt="Yalgud Dairy Logo"
+//                 sx={{
+//                   width: 55,
+//                   height: 55,
+//                   objectFit: "contain",
+//                 }}
+//               />
+
+//               <Box>
+//                 <Typography
+//                   variant="h5"
+//                   fontWeight="bold"
+//                   color="#0b5394"
+//                   lineHeight={1.2}
+//                 >
+//                   YALGUD DAIRY
+//                 </Typography>
+
+//                 <Typography variant="subtitle2" color="text.secondary">
+//                   Admin Portal
+//                 </Typography>
+//               </Box>
+//             </Box>
+
+//             {/* USERNAME */}
+//             <TextField
+//               label="Username"
+//               fullWidth
+//               value={creds.username}
+//               onChange={(e) => setCreds({ ...creds, username: e.target.value })}
+//               sx={{ mb: 2 }}
+//               InputProps={{
+//                 startAdornment: (
+//                   <InputAdornment position="start">
+//                     <PersonIcon color="primary" />
+//                   </InputAdornment>
+//                 ),
+//               }}
+//             />
+
+//             {/* PASSWORD */}
+//             <TextField
+//               label="Password"
+//               type="password"
+//               fullWidth
+//               value={creds.password}
+//               onChange={(e) => setCreds({ ...creds, password: e.target.value })}
+//               sx={{ mb: 4 }}
+//               InputProps={{
+//                 startAdornment: (
+//                   <InputAdornment position="start">
+//                     <LockIcon color="primary" />
+//                   </InputAdornment>
+//                 ),
+//               }}
+//             />
+
+//             {/* CENTERED LOGIN BUTTON */}
+//             <Box sx={{ display: "flex", justifyContent: "center" }}>
+//               <Button
+//                 variant="contained"
+//                 size="large"
+//                 onClick={handleLogin}
+//                 disabled={loading}
+//                 sx={{
+//                   px: 6,
+//                   py: 1.4,
+//                   fontWeight: "bold",
+//                   borderRadius: 2,
+//                   textTransform: "none",
+//                   minWidth: 220,
+//                 }}
+//               >
+//                 {loading ? (
+//                   <CircularProgress size={22} sx={{ color: "#fff" }} />
+//                 ) : (
+//                   "Login"
+//                 )}
+//               </Button>
+//             </Box>
+
+//             {/* FOOTER */}
+//             <Typography
+//               variant="caption"
+//               display="block"
+//               textAlign="center"
+//               color="text.secondary"
+//               mt={3}
+//             >
+//               {/* © {new Date().getFullYear()} Yalgud Dairy */}
+//             </Typography>
+//           </CardContent>
+//         </Card>
+
+//         <Snackbar
+//           open={snack.open}
+//           autoHideDuration={3000}
+//           onClose={() => setSnack({ ...snack, open: false })}
+//         >
+//           <Alert severity={snack.severity} variant="filled">
+//             {snack.message}
+//           </Alert>
+//         </Snackbar>
+//       </Container>
+//     </Box>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+// // src/pages/LoginPage.js
+// import React, { useState } from "react";
+// import {
+//   Box,
+//   Card,
+//   CardContent,
+//   TextField,
+//   Button,
+//   Typography,
+//   Container,
+//   InputAdornment,
+//   CircularProgress,
+//   Snackbar,
+//   Alert,
+// } from "@mui/material";
+// import LockIcon from "@mui/icons-material/Lock";
+// import PersonIcon from "@mui/icons-material/Person";
+// import { useNavigate } from "react-router-dom";
+// import logo from "../assets/logo.png";
+// import axios from "axios";
+
+// export default function LoginPage() {
+//   const navigate = useNavigate();
+//   // const BASE_URL = process.env.REACT_APP_BASE_URL;
+//   const BASE_URL = process.env.REACT_APP_BASE_URL;
+
+
+//   const [creds, setCreds] = useState({
+//     username: "",
+//     password: "",
+//   });
+
+//   const [loading, setLoading] = useState(false);
+//   const [snack, setSnack] = useState({
+//     open: false,
+//     message: "",
+//     severity: "error",
+//   });
+
+//   const handleLogin = async () => {
+//     if (!creds.username || !creds.password) {
+//       setSnack({
+//         open: true,
+//         message: "Username and password are required",
+//         severity: "error",
+//       });
+//       return;
+//     }
+
+//     setLoading(true);
+
+//     try {
+//       const res = await axios.post(
+//         `${BASE_URL}/agent/admin/login`,
+//         creds,
+//         { headers: { "Content-Type": "application/json" } }
+//       );
+
+//       console.log("LOGIN RESPONSE FULL =", res.data);
+
+//       const token =
+//         res.data?.token ||
+//         res.data?.accessToken ||
+//         res.data?.data?.token;
+
+//       if (!token) {
+//         throw new Error("JWT token not received from server");
+//       }
+
+//       localStorage.setItem("authToken", token);
+//       localStorage.setItem("userRole", "admin");
+
+//       navigate("/dashboard");
+//     } catch (err) {
+//       setSnack({
+//         open: true,
+//         message:
+//           err.response?.data?.message ||
+//           err.message ||
+//           "Login failed",
+//         severity: "error",
+//       });
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <Box
+//       sx={{
+//         minHeight: "100vh",
+//         display: "flex",
+//         alignItems: "center",
+//         justifyContent: "center",
+//         backgroundImage: "url('/bg.jpg')",
+//         backgroundSize: "cover",
+//         backgroundPosition: "center",
+//         p: 2,
+//       }}
+//     >
+//       <Container maxWidth="xs">
+//         <Card elevation={16} sx={{ borderRadius: 4 }}>
+//           <CardContent sx={{ p: 4 }}>
+//             <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
+//               <Box
+//                 component="img"
+//                 src={logo}
+//                 alt="Yalgud Dairy Logo"
+//                 sx={{ width: 55, height: 55 }}
+//               />
+//               <Box>
+//                 <Typography variant="h5" fontWeight="bold" color="#0b5394">
+//                   YALGUD DAIRY
+//                 </Typography>
+//                 <Typography variant="subtitle2" color="text.secondary">
+//                   Admin Portal
+//                 </Typography>
+//               </Box>
+//             </Box>
+
+//             <TextField
+//               label="Username"
+//               fullWidth
+//               value={creds.username}
+//               onChange={(e) =>
+//                 setCreds({ ...creds, username: e.target.value })
+//               }
+//               sx={{ mb: 2 }}
+//               InputProps={{
+//                 startAdornment: (
+//                   <InputAdornment position="start">
+//                     <PersonIcon color="primary" />
+//                   </InputAdornment>
+//                 ),
+//               }}
+//             />
+
+//             <TextField
+//               label="Password"
+//               type="password"
+//               fullWidth
+//               value={creds.password}
+//               onChange={(e) =>
+//                 setCreds({ ...creds, password: e.target.value })
+//               }
+//               sx={{ mb: 4 }}
+//               InputProps={{
+//                 startAdornment: (
+//                   <InputAdornment position="start">
+//                     <LockIcon color="primary" />
+//                   </InputAdornment>
+//                 ),
+//               }}
+//             />
+
+//             <Box sx={{ display: "flex", justifyContent: "center" }}>
+//               <Button
+//                 variant="contained"
+//                 size="large"
+//                 onClick={handleLogin}
+//                 disabled={loading}
+//                 sx={{ px: 6, py: 1.4, minWidth: 220 }}
+//               >
+//                 {loading ? (
+//                   <CircularProgress size={22} sx={{ color: "#fff" }} />
+//                 ) : (
+//                   "Login"
+//                 )}
+//               </Button>
+//             </Box>
+//           </CardContent>
+//         </Card>
+
+//         <Snackbar
+//           open={snack.open}
+//           autoHideDuration={3000}
+//           onClose={() => setSnack({ ...snack, open: false })}
+//         >
+//           <Alert severity={snack.severity} variant="filled">
+//             {snack.message}
+//           </Alert>
+//         </Snackbar>
+//       </Container>
+//     </Box>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // src/pages/LoginPage.js
 import React, { useState } from "react";
 import {
@@ -498,6 +1035,9 @@ import axios from "axios";
 export default function LoginPage() {
   const navigate = useNavigate();
 
+  // ✅ BASE URL FROM .env
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
+
   const [creds, setCreds] = useState({
     username: "",
     password: "",
@@ -520,25 +1060,54 @@ export default function LoginPage() {
       return;
     }
 
+    if (!BASE_URL) {
+      setSnack({
+        open: true,
+        message: "BASE_URL is undefined. Check .env file",
+        severity: "error",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const res = await axios.post(
-        "http://122.169.40.118:8002/api/agent/admin/login",
-        creds,
-        { headers: { "Content-Type": "application/json" } }
-      );
+      // ✅ SAME STYLE AS YOUR NODE AXIOS FUNCTION
+      const config = {
+        method: "post",
+        url: `${BASE_URL}/agent/admin/login`,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: JSON.stringify({
+          username: creds.username,
+          password: creds.password,
+        }),
+      };
 
-      if (!res.data?.token) throw new Error("Invalid response");
+      const response = await axios.request(config);
 
-      localStorage.setItem("authToken", res.data.token);
+      console.log("LOGIN RESPONSE FULL =", response.data);
+
+      const token = response.data?.token;
+
+      if (!token) {
+        throw new Error("JWT token not received from server");
+      }
+
+      // ✅ SAVE TOKEN
+      localStorage.setItem("authToken", token);
       localStorage.setItem("userRole", "admin");
 
+      // ✅ GO TO DASHBOARD
       navigate("/dashboard");
-    } catch (err) {
+    } catch (error) {
       setSnack({
         open: true,
-        message: err.response?.data?.message || err.message || "Login failed",
+        message:
+          error.response?.data?.message ||
+          error.message ||
+          "Login failed",
         severity: "error",
       });
     } finally {
@@ -562,48 +1131,25 @@ export default function LoginPage() {
       <Container maxWidth="xs">
         <Card elevation={16} sx={{ borderRadius: 4 }}>
           <CardContent sx={{ p: 4 }}>
-            {/* LOGO + TITLE */}
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 2,
-                mb: 3,
-              }}
-            >
-              <Box
-                component="img"
-                src={logo}
-                alt="Yalgud Dairy Logo"
-                sx={{
-                  width: 55,
-                  height: 55,
-                  objectFit: "contain",
-                }}
-              />
-
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
+              <Box component="img" src={logo} sx={{ width: 55, height: 55 }} />
               <Box>
-                <Typography
-                  variant="h5"
-                  fontWeight="bold"
-                  color="#0b5394"
-                  lineHeight={1.2}
-                >
+                <Typography variant="h5" fontWeight="bold" color="#0b5394">
                   YALGUD DAIRY
                 </Typography>
-
                 <Typography variant="subtitle2" color="text.secondary">
                   Admin Portal
                 </Typography>
               </Box>
             </Box>
 
-            {/* USERNAME */}
             <TextField
               label="Username"
               fullWidth
               value={creds.username}
-              onChange={(e) => setCreds({ ...creds, username: e.target.value })}
+              onChange={(e) =>
+                setCreds({ ...creds, username: e.target.value })
+              }
               sx={{ mb: 2 }}
               InputProps={{
                 startAdornment: (
@@ -614,13 +1160,14 @@ export default function LoginPage() {
               }}
             />
 
-            {/* PASSWORD */}
             <TextField
               label="Password"
               type="password"
               fullWidth
               value={creds.password}
-              onChange={(e) => setCreds({ ...creds, password: e.target.value })}
+              onChange={(e) =>
+                setCreds({ ...creds, password: e.target.value })
+              }
               sx={{ mb: 4 }}
               InputProps={{
                 startAdornment: (
@@ -631,21 +1178,13 @@ export default function LoginPage() {
               }}
             />
 
-            {/* CENTERED LOGIN BUTTON */}
             <Box sx={{ display: "flex", justifyContent: "center" }}>
               <Button
                 variant="contained"
                 size="large"
                 onClick={handleLogin}
                 disabled={loading}
-                sx={{
-                  px: 6,
-                  py: 1.4,
-                  fontWeight: "bold",
-                  borderRadius: 2,
-                  textTransform: "none",
-                  minWidth: 220,
-                }}
+                sx={{ px: 6, py: 1.4, minWidth: 220 }}
               >
                 {loading ? (
                   <CircularProgress size={22} sx={{ color: "#fff" }} />
@@ -654,17 +1193,6 @@ export default function LoginPage() {
                 )}
               </Button>
             </Box>
-
-            {/* FOOTER */}
-            <Typography
-              variant="caption"
-              display="block"
-              textAlign="center"
-              color="text.secondary"
-              mt={3}
-            >
-              {/* © {new Date().getFullYear()} Yalgud Dairy */}
-            </Typography>
           </CardContent>
         </Card>
 
